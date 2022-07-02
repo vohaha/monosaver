@@ -1,5 +1,6 @@
 import { AxiosError } from "axios";
 import { Request, Response, NextFunction } from "express";
+import { AppError } from "./error";
 
 export function createRequestHandler(
   fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
@@ -9,7 +10,15 @@ export function createRequestHandler(
       await fn(req, res, next);
     } catch (error) {
       if (!(error instanceof AxiosError)) {
-        res.status(500).send({ errorDescription: "Internal error!" });
+        let customErrorMessage;
+        let customErrorStatus;
+        if (error instanceof AppError) {
+          customErrorMessage = error.message;
+          customErrorStatus = error.status;
+        }
+        res
+          .status(customErrorStatus || 500)
+          .send({ errorDescription: customErrorMessage || "Internal error!" });
         return;
       }
       if (error?.response) {

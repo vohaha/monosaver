@@ -6,7 +6,7 @@ import { accountsRouter } from "./modules/accounts/router";
 import { notFoundHandler } from "./middleware/notFound.middleware";
 import { connectRedis } from "./redis";
 import { clientInfoRouter } from "./modules/clientInfo/router";
-import { createRequestHandler } from "./common/createRequestHandler";
+import { statementsRouter } from "./modules/statements/router";
 
 /*
  * Global configs
@@ -35,6 +35,7 @@ app.use(
 app.use(express.json());
 app.use("/api/v1/accounts", accountsRouter);
 app.use("/api/v1/client-info", clientInfoRouter);
+app.use("/api/v1/statements", statementsRouter);
 
 app.use(notFoundHandler);
 

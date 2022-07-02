@@ -1,7 +1,6 @@
 import express from "express";
 import { redisClient } from "../../redis";
 import { fetchClientInfo } from "../mono/api";
-import { AxiosError } from "axios";
 import { createRequestHandler } from "../../common/createRequestHandler";
 
 export const clientInfoRouter = express.Router();
@@ -11,9 +10,6 @@ const REDIS_CACHE_KEY = "clientInfo";
 clientInfoRouter.get(
   "/",
   createRequestHandler(async (req, res, next) => {
-    // const x = {};
-    // // @ts-ignore
-    // console.log(x.a.b);
     const cache = await redisClient.get(REDIS_CACHE_KEY);
     if (cache != null) {
       res.status(200).json(JSON.parse(cache));

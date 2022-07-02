@@ -50,5 +50,7 @@ export async function getStatements(
   month: number,
   year: number
 ) {
-  return await client<UIStatement[]>(`statement/${accountId}/${month}/${year}`);
+  return await client<UIStatement[]>(
+    `v1/statements/${accountId}/${month}/${year}`
+  );
 }

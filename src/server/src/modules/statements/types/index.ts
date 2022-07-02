@@ -18,7 +18,7 @@ interface MonoStatement {
   counterIban: string;
 }
 
-interface Statement extends MonoStatement {}
+export interface Statement extends MonoStatement {}
 
 export interface UIStatement
   extends Pick<

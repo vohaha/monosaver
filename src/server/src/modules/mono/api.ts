@@ -13,8 +13,8 @@ export async function fetchClientInfo() {
 
 export async function fetchTransactions(
   accountId: string,
-  from: string,
-  to: string
+  from: number,
+  to: number
 ) {
   return await monoPersonal.get(`/statement/${accountId}/${from}/${to}`);
 }
