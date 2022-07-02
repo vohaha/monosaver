@@ -1,5 +1,5 @@
 import { Account } from "../modules/accounts/type";
-import { UIStatement } from "../server/modules/statements/types";
+import { UIStatement } from "../server/src/modules/statements/types";
 
 interface ClientConfig {
   method?: "POST" | "GET";

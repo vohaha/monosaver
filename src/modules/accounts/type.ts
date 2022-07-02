@@ -1,4 +1,4 @@
-import { UIAccount } from "../../server/modules/accounts/types";
+import { UIAccount } from "../../server/src/modules/accounts/types";
 
 export interface State {
   defaultAccountId: string | null;

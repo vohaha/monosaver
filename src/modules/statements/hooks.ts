@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useQueries } from "react-query";
 import { getStatements } from "../../api";
 import { useEnabledAccounts } from "../accounts/hooks";
-import { UIStatement } from "../../server/modules/statements/types";
+import { UIStatement } from "../../server/src/modules/statements/types";
 import groupBy from "just-group-by";
 
 export function useFetchStatements() {
