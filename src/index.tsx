@@ -23,13 +23,13 @@ const queryClient = new QueryClient({
     },
   },
 });
-const localStoragePersistor = createWebStoragePersistor({
-  storage: window.localStorage,
-});
-persistQueryClient({
-  queryClient,
-  persistor: localStoragePersistor,
-});
+// const localStoragePersistor = createWebStoragePersistor({
+//   storage: window.localStorage,
+// });
+// persistQueryClient({
+//   queryClient,
+//   persistor: localStoragePersistor,
+// });
 
 root.render(
   <React.StrictMode>

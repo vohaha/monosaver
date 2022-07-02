@@ -37,13 +37,13 @@ function client<T>(
 }
 
 export async function getClientInfo() {
-  return await client("client-info");
+  return await client("v1/client-info");
 }
 export async function getJars() {
   return await client("jars");
 }
 export async function getAccounts() {
-  return await client<Account[]>("accounts");
+  return await client<Account[]>("v1/accounts");
 }
 export async function getStatements(
   accountId: string,
