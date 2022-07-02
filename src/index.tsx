@@ -1,15 +1,44 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+import { persistQueryClient } from "react-query/persistQueryClient-experimental";
+import { createWebStoragePersistor } from "react-query/createWebStoragePersistor-experimental";
+import { BrowserRouter } from "react-router-dom";
+import reportWebVitals from "./reportWebVitals";
+import { App } from "./App";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      retryOnMount: true,
+      refetchOnWindowFocus: true,
+      refetchOnReconnect: true,
+      staleTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+});
+const localStoragePersistor = createWebStoragePersistor({
+  storage: window.localStorage,
+});
+persistQueryClient({
+  queryClient,
+  persistor: localStoragePersistor,
+});
+
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <App />
+        <ReactQueryDevtools />
+      </QueryClientProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

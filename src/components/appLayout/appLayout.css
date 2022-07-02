@@ -1,0 +1,47 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.app-layout__main {
+  display: flex;
+  height: 100%;
+  overflow: auto;
+}
+
+.app-layout__nav {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  margin: auto 0 0 0;
+  background: #fff;
+}
+
+.app-layout__list {
+  display: flex;
+  justify-content: space-around;
+}
+
+.app-layout__list-item {
+  width: 100%;
+  height: 48px;
+}
+
+.app-layout__link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 24px;
+  text-decoration: none;
+}
+
+.app-layout__link:hover {
+  box-shadow: inset 0 0 5px rgba(100, 118, 237, 0.16);
+}
+
+.app-layout__link:active {
+  box-shadow: inset 0 0 5px #6476ed;
+}
