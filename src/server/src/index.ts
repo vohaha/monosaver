@@ -17,7 +17,7 @@ void connectRedis();
 /**
  * App Variables
  */
-if (!process.env.PORT) {
+if (!process.env.PORT || !process.env.CLIENT_ORIGIN) {
   process.exit(1);
 }
 const PORT = parseInt(process.env.PORT, 10);
@@ -29,7 +29,7 @@ const app = express();
 app.use(helmet());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_ORIGIN,
   })
 );
 app.use(express.json());

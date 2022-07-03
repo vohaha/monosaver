@@ -7,50 +7,54 @@ interface ClientConfig {
   headers?: {};
 }
 
-function client<T>(
-  endpoint: string,
-  { body, ...customConfig }: ClientConfig = {}
-): Promise<T> {
-  const headers = { "Content-Type": "application/json" };
-  const config: RequestInit = {
-    method: body ? "POST" : "GET",
-    ...customConfig,
-    headers: {
-      ...headers,
-      ...customConfig.headers,
-    },
-  };
-  if (body) {
-    config.body = JSON.stringify(body);
-  }
+function createClient(apiURL: string) {
+  return function client<T>(
+    endpoint: string,
+    { body, ...customConfig }: ClientConfig = {}
+  ): Promise<T> {
+    const headers = { "Content-Type": "application/json" };
+    const config: RequestInit = {
+      method: body ? "POST" : "GET",
+      ...customConfig,
+      headers: {
+        ...headers,
+        ...customConfig.headers,
+      },
+    };
+    if (body) {
+      config.body = JSON.stringify(body);
+    }
 
-  return window
-    .fetch(`${process.env.REACT_APP_API_URL}/${endpoint}`, config)
-    .then(async (response) => {
-      if (response.ok) {
-        return await response.json();
-      } else {
-        const errorMessage = await response.text();
-        throw new Error(errorMessage);
-      }
-    });
+    return window
+      .fetch(`${apiURL}/${endpoint}`, config)
+      .then(async (response) => {
+        if (response.ok) {
+          return await response.json();
+        } else {
+          const errorMessage = await response.text();
+          throw new Error(errorMessage);
+        }
+      });
+  };
 }
+
+const api = createClient(`${process.env.REACT_APP_API_URL}/api`);
 
 export async function getClientInfo() {
-  return await client("v1/client-info");
+  return await api("v1/client-info");
 }
 export async function getJars() {
-  return await client("jars");
+  return await api("jars");
 }
 export async function getAccounts() {
-  return await client<Account[]>("v1/accounts");
+  return await api<Account[]>("v1/accounts");
 }
 export async function getStatements(
   accountId: string,
   month: number,
   year: number
 ) {
-  return await client<UIStatement[]>(
+  return await api<UIStatement[]>(
     `v1/statements/${accountId}/${month}/${year}`
   );
 }
