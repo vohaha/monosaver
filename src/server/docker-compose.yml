@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  db:
+    container_name: monosaverdb
+    image: postgres
+    restart: always
+    env_file: ./.env
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+volumes:
+  db:
+    driver: local
