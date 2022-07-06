@@ -7,7 +7,7 @@ import {
   getStatementCacheKey,
   uitifyStatements,
 } from "./helpers";
-import { AppError } from "../../common/error";
+import { HttpError } from "../../common/errors";
 
 export const statementsRouter = express.Router();
 
@@ -29,7 +29,7 @@ statementsRouter.get(
   createRequestHandler(async (req, res) => {
     const { month: requestedMonth, year: requestedYear } = req.params;
     if (isNaN(+requestedMonth) || isNaN(+requestedYear)) {
-      throw new AppError("Invalid month or year", 400);
+      throw new HttpError("Invalid month or year", 400);
     }
     const [startOfRequestedMonth, endOfRequestedMonth] = getMonthRange(
       +requestedMonth,

@@ -2,8 +2,18 @@ import { Suspense } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { FullSizeLoader } from "../loader";
 import "./appLayout.css";
+import { useQueryClient } from "react-query";
+import { getClientInfo } from "../../api";
+import { useSetDefaultAccount } from "../../modules/accounts/hooks";
 
 export function AppLayout() {
+  useSetDefaultAccount();
+  const queryClient = useQueryClient();
+  queryClient.prefetchQuery("clientInfo", getClientInfo, {
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
+
   return (
     <main className="app-layout">
       <div className="app-layout__main">

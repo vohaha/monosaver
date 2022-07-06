@@ -1,10 +1,8 @@
 import { AxiosError } from "axios";
-import { Request, Response, NextFunction } from "express";
-import { AppError } from "./error";
+import { Request, Response, NextFunction, RequestHandler } from "express";
+import { HttpError } from "./errors";
 
-export function createRequestHandler(
-  fn: (req: Request, res: Response, next: NextFunction) => Promise<void>
-) {
+export function createRequestHandler(fn: RequestHandler): RequestHandler {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       await fn(req, res, next);
@@ -12,7 +10,7 @@ export function createRequestHandler(
       if (!(error instanceof AxiosError)) {
         let customErrorMessage;
         let customErrorStatus;
-        if (error instanceof AppError) {
+        if (error instanceof HttpError) {
           customErrorMessage = error.message;
           customErrorStatus = error.status;
         }
@@ -23,9 +21,10 @@ export function createRequestHandler(
       }
       if (error?.response) {
         res.status(error.response.status).send(error.response.data);
-      } else if (error.request) {
-        res.status(500).send("External error!");
+        return;
       } else {
+        res.status(500).send("External error!");
+        return;
       }
     }
   };

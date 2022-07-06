@@ -25,3 +25,5 @@ yarn-error.log*
 .env
 .idea
 src/server/db
+**/*priv.pem
+**/*pub.pem
