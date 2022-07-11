@@ -9,7 +9,7 @@ import { useSetDefaultAccount } from "../../modules/accounts/hooks";
 export function AppLayout() {
   useSetDefaultAccount();
   const queryClient = useQueryClient();
-  queryClient.prefetchQuery("clientInfo", getClientInfo, {
+  queryClient.prefetchQuery(["clientInfo"], getClientInfo, {
     staleTime: Infinity,
     cacheTime: Infinity,
   });

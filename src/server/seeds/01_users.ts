@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { generatePassword } from "../src/modules/auth/helpers";
+import { hashifyPassword } from "../src/modules/auth/helpers";
 import { IUser } from "../src/modules/users/types";
 
 const testUsers: IUser[] = [
@@ -25,7 +25,7 @@ export async function seed(knex: Knex) {
   await knex("users").insert(
     testUsers.map((user) => ({
       ...user,
-      ...generatePassword(user.email.split("@")[0]),
+      ...hashifyPassword(user.email.split("@")[0]),
     }))
   );
 }

@@ -13,9 +13,10 @@
     "just-group-by": "^2.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-query": "^3.39.1",
+    "react-query": "^4.0.0-beta.23",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "thwack": "^0.6.2",
     "typescript": "^4.7.4",
     "web-vitals": "^2.1.4"
   },

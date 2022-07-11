@@ -1,6 +1,6 @@
 import { IUser } from "./types";
 import { User } from "./model";
-import { generatePassword } from "../auth/helpers";
+import { hashifyPassword } from "../auth/helpers";
 
 export const userService = {
   async create({
@@ -12,10 +12,10 @@ export const userService = {
   }): Promise<IUser | null> {
     const user = await User.findOneByEmail(email);
     if (user != null) {
+      console.error("User already exists");
       return null;
     }
-    const passwordData = generatePassword(password);
-    return await User.create({ email, ...passwordData });
+    return await User.create({ email, ...hashifyPassword(password) });
   },
   async findUserByEmail(email: string): Promise<IUser> {
     return await User.findOneByEmail(email);

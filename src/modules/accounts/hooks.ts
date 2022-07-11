@@ -6,26 +6,34 @@ import { getEnabledAccounts } from "./utils";
 import { setDefaultAccount } from "./actions";
 
 export function useFetchAccounts() {
-  return useQuery("accounts", getAccounts);
+  return useQuery(["accounts"], getAccounts);
 }
 
 export function useEnabledAccounts() {
-  const { data: allAccounts } = useFetchAccounts();
+  const { data: apiResponse } = useFetchAccounts();
   const [{ enabledAccountIds }] = useAccountsMeta();
   return useMemo(() => {
+    if (apiResponse == null) {
+      return [];
+    }
+    const allAccounts = apiResponse.data;
     if (allAccounts == null) {
       return [];
     }
     return getEnabledAccounts(allAccounts, enabledAccountIds);
-  }, [allAccounts, enabledAccountIds]);
+  }, [apiResponse, enabledAccountIds]);
 }
 
 export function useSetDefaultAccount() {
-  const { data: accounts } = useFetchAccounts();
+  const { data: apiResponse } = useFetchAccounts();
   const [, dispatch] = useAccountsMeta();
   useEffect(() => {
+    if (apiResponse == null) {
+      return;
+    }
+    const accounts = apiResponse.data;
     if (accounts != null) {
       setDefaultAccount(accounts, dispatch);
     }
-  }, [accounts, dispatch]);
+  }, [apiResponse, dispatch]);
 }

@@ -6,6 +6,7 @@ import { RequireAuth } from "../modules/auth/RequireAuth";
 const SpendingPage = lazy(() => import("./pages/spending"));
 const HomePage = lazy(() => import("./pages/home"));
 const LoginPage = lazy(() => import("./pages/login"));
+const SettingsPage = lazy(() => import("./pages/settings"));
 
 export function AppRoutes() {
   return (
@@ -19,7 +20,7 @@ export function AppRoutes() {
         }
       >
         <Route path="/spending" element={<SpendingPage />} />
-        <Route path="/settings" element={<div>Settings</div>} />
+        <Route path="/settings" element={<SettingsPage />} />
         <Route index element={<HomePage />} />
       </Route>
       <Route path="/login" element={<LoginPage />} />

@@ -1,23 +1,15 @@
-import { IUser, UIUser } from "../users/types";
-import * as jsonwebtoken from "jsonwebtoken";
-import * as crypto from "crypto";
-import { PRIV_KEY } from "../../../utils/keypair/utils";
-import { AuthConfig } from "./type";
+import crypto from "crypto";
+import { IUser } from "../users/types";
 
-function createHash(payload: string, salt: string): string {
+export function createHashWithSalt(payload: string, salt: string) {
   return crypto
-    .pbkdf2Sync(payload, salt, 100_000, 64, "sha512")
+    .pbkdf2Sync(payload, salt, 310_000, 64, "sha512")
     .toString("hex");
 }
 
-export function validatePassword(password: string, hash: string, salt: string) {
-  const hashVerify = createHash(password, salt);
-  return hash === hashVerify;
-}
-
-export function generatePassword(password: string) {
+export function hashifyPassword(password: string) {
   const salt = crypto.randomBytes(32).toString("hex");
-  const password_hash = createHash(password, salt);
+  const password_hash = createHashWithSalt(password, salt);
 
   return {
     salt,
@@ -25,19 +17,10 @@ export function generatePassword(password: string) {
   };
 }
 
-export function issueJWT(user: IUser): AuthConfig {
-  const payload: Omit<UIUser, "iat" | "exp"> = {
-    sub: user.id,
-    email: user.email,
-  };
-  const expiresIn = "1d";
-
-  const signedToken = jsonwebtoken.sign(payload, PRIV_KEY, {
-    algorithm: "RS256",
-    expiresIn,
-  });
-
-  return {
-    token: signedToken,
-  };
+export function comparePassword(password: string, user: IUser) {
+  const potentialPasswordHash = createHashWithSalt(password, user.salt);
+  return crypto.timingSafeEqual(
+    Buffer.from(user.password_hash, "hex"),
+    Buffer.from(potentialPasswordHash, "hex")
+  );
 }

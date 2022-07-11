@@ -6,17 +6,17 @@ import { useFetchAccounts } from "./hooks";
 import { toggleAccount } from "./actions";
 
 export default function AccountList() {
-  const { data: accounts, error, refetch } = useFetchAccounts();
+  const { data: apiResponse, isFetching, error, refetch } = useFetchAccounts();
   const [{ enabledAccountIds }, dispatch] = useAccountsMeta();
-  if (accounts == null) {
+  if (isFetching == null) {
     return <FullSizeLoader />;
   }
   if (error != null) {
     return <ErrorFallback reset={refetch} />;
   }
-  return (
+  return apiResponse?.data.length ? (
     <ul>
-      {accounts.map((account) => (
+      {apiResponse.data.map((account) => (
         <li key={account.id}>
           <div>
             <span>{account.currencyCode}</span>
@@ -41,5 +41,7 @@ export default function AccountList() {
         </li>
       ))}
     </ul>
+  ) : (
+    <div>No accounts</div>
   );
 }

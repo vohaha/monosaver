@@ -8,8 +8,8 @@ import groupBy from "just-group-by";
 export function useFetchStatements() {
   const enabledAccounts = useEnabledAccounts();
   const now = new Date();
-  const statementsResponse = useQueries(
-    enabledAccounts.map((account) => ({
+  const statementsResponse = useQueries({
+    queries: enabledAccounts.map((account) => ({
       queryKey: ["statement", account?.id || "defaultAccount"],
       queryFn: () =>
         getStatements(
@@ -17,8 +17,8 @@ export function useFetchStatements() {
           now.getMonth(),
           now.getFullYear()
         ),
-    }))
-  );
+    })),
+  });
   const isLoading = statementsResponse.find(({ isLoading }) => isLoading);
   const isError = statementsResponse.find(({ status }) => status === "error");
   const isSuccess = statementsResponse.every(
@@ -30,7 +30,7 @@ export function useFetchStatements() {
     }
     return statementsResponse.reduce<UIStatement[]>((acc, curr) => {
       if (curr.data != null) {
-        acc.push(...curr.data);
+        acc.push(...curr.data.data);
       }
       return acc;
     }, []);

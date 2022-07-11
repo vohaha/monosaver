@@ -1,81 +1,51 @@
 import { Account } from "../modules/accounts/type";
 import { UIStatement } from "../server/src/modules/statements/types";
-import { Token as AuthToken } from "../modules/auth/type";
-import { getTokenFromLocalStorage } from "../modules/auth/utils";
-import { AuthConfig } from "../server/src/modules/auth/type";
+import thwack from "thwack";
 
-interface ClientConfig {
-  method?: "POST" | "GET";
-  body?: {};
-  headers?: { [key: string]: string };
-}
+thwack.defaults.baseURL = process.env.REACT_APP_API_URL;
 
-function createClient(apiURL: string) {
-  return function client<T>(
-    endpoint: string,
-    { body, ...customConfig }: ClientConfig = {}
-  ): Promise<T> {
-    const headers = new Headers({ "Content-Type": "application/json" });
-    const authToken = getTokenFromLocalStorage();
-    if (authToken) {
-      headers.append("Authorization", createAuthorizationHeader(authToken));
-    }
-    if (customConfig.headers != null) {
-      Object.entries(customConfig.headers).forEach(([key, value]) => {
-        headers.append(key, value);
-      });
-    }
-    const config: RequestInit = {
-      method: body ? "POST" : "GET",
-      ...customConfig,
-      headers,
-    };
-    if (body) {
-      config.body = JSON.stringify(body);
-    }
+const baseAPI = thwack.create({
+  credentials: "include",
+});
 
-    return window
-      .fetch(`${apiURL}/${endpoint}`, config)
-      .then(async (response) => {
-        if (response.ok) {
-          return await response.json();
-        } else {
-          const errorMessage = await response.text();
-          throw new Error(errorMessage);
-        }
-      });
-  };
-}
+const authAPI = baseAPI.create();
 
-const authAPI = createClient(`${process.env.REACT_APP_API_URL}/auth`);
 export async function fetchLogin(body: { email: string; password: string }) {
-  return await authAPI<AuthConfig>("login", { body });
-}
-export async function fetchSignUp(body: { email: string; password: string }) {
-  return await authAPI("signup", { body });
+  return await authAPI.post("auth/login", body);
 }
 
-const protectedAPI = createClient(`${process.env.REACT_APP_API_URL}/api`);
+export async function fetchSignUp(body: { email: string; password: string }) {
+  return await authAPI.post("auth/signup", body);
+}
+
+export async function fetchLogout() {
+  return await authAPI.get("auth/logout");
+}
+
+export async function fetchVerify() {
+  return await authAPI.get("auth/verify");
+}
+
+const protectedAPI = baseAPI.create();
 
 export async function getClientInfo() {
-  return await protectedAPI("v1/client-info");
+  return await protectedAPI.get("api/v1/client-info");
 }
+
 export async function getJars() {
-  return await protectedAPI("jars");
+  return await protectedAPI.get("jars");
 }
+
 export async function getAccounts() {
-  return await protectedAPI<Account[]>("v1/accounts");
+  return await protectedAPI.get<Account[]>("api/v1/accounts");
 }
+
 export async function getStatements(
   accountId: string,
   month: number,
   year: number
 ) {
-  return await protectedAPI<UIStatement[]>(
-    `v1/statements/${accountId}/${month}/${year}`
+  return await protectedAPI.get<UIStatement[]>(
+    `api/v1/statements/${accountId}/${month}/${year}`
   );
-}
-
-function createAuthorizationHeader(token: AuthToken) {
-  return `Bearer ${token}`;
 }

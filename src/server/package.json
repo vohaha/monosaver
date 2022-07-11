@@ -11,16 +11,15 @@
     "mgrt:rollback": "npx knex migrate:rollback --",
     "seed:init": "npx knex seed:run --",
     "db:init": "npm run mgrt:latest && npm run seed:init",
-    "db:reset": "npx knex migrate:rollback --all",
-    "generateKeys": "npx ts-node ./utils/keypair/generate.ts"
+    "db:reset": "npx knex migrate:rollback --all"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/cors": "^2.8.12",
-    "@types/passport-http-bearer": "^1.0.37",
-    "@types/passport-jwt": "^3.0.6",
+    "@types/express-session": "^1.17.5",
+    "@types/passport-local": "^1.0.34",
     "@types/pg": "^8.6.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.7.4"
@@ -29,16 +28,13 @@
     "@types/passport": "^1.0.9",
     "axios": "^0.27.2",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
+    "express-session": "^1.17.3",
     "helmet": "^5.1.0",
-    "jsonwebtoken": "^8.5.1",
     "knex": "^2.1.0",
-    "openid-client": "^5.1.8",
     "passport": "^0.6.0",
-    "passport-http-bearer": "^1.0.1",
-    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "pg": "^8.7.3",
     "redis": "^4.1.1"
   }

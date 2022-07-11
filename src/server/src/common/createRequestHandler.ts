@@ -7,6 +7,7 @@ export function createRequestHandler(fn: RequestHandler): RequestHandler {
     try {
       await fn(req, res, next);
     } catch (error) {
+      console.error(error);
       if (!(error instanceof AxiosError)) {
         let customErrorMessage;
         let customErrorStatus;
@@ -14,9 +15,9 @@ export function createRequestHandler(fn: RequestHandler): RequestHandler {
           customErrorMessage = error.message;
           customErrorStatus = error.status;
         }
-        res
-          .status(customErrorStatus || 500)
-          .send({ errorDescription: customErrorMessage || "Internal error!" });
+        res.status(customErrorStatus || 500).send({
+          errorDescription: customErrorMessage || "Internal error!",
+        });
         return;
       }
       if (error?.response) {

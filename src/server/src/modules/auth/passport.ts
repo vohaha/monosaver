@@ -1,21 +1,52 @@
 import passport from "passport";
-import { Strategy, ExtractJwt } from "passport-jwt";
+import { Strategy } from "passport-local";
 import { userService } from "../users/service";
-import { PUB_KEY } from "../../../utils/keypair/utils";
+import { comparePassword, createHashWithSalt } from "./helpers";
+import crypto from "crypto";
+
+const inMemorySessionStorage = new Map();
 
 export function configurePassport(passport: passport.PassportStatic) {
-  const options = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: PUB_KEY,
-    algorithms: ["RS256"],
-  };
-  const strategy = new Strategy(options, (jwtPayload, done) => {
-    userService.findUserById(jwtPayload.sub).then((user) => {
-      if (user == null) {
-        return done(null, false);
+  passport.use(
+    new Strategy(
+      { usernameField: "email", passwordField: "password" },
+      (email, password, done) => {
+        userService
+          .findUserByEmail(email)
+          .then((user) => {
+            if (user == null) {
+              return done(null, false, { message: "Incorrect email." });
+            }
+            const potentialPasswordHash = createHashWithSalt(
+              password,
+              user.salt
+            );
+            const isValid = comparePassword(potentialPasswordHash, user);
+            if (isValid) {
+              return done(null, false, {
+                message: "Incorrect password.",
+              });
+            }
+            return done(null, user);
+          })
+          .catch((err) => {
+            done(err);
+          });
       }
-      return done(null, user);
-    });
+    )
+  );
+
+  passport.serializeUser<string>((user, cb) => {
+    const sessionId = crypto.randomBytes(32).toString("hex");
+    inMemorySessionStorage.set(sessionId, user);
+    cb(null, sessionId);
   });
-  passport.use(strategy);
+
+  passport.deserializeUser<number>(function (sessionId, cb) {
+    const user = inMemorySessionStorage.get(sessionId);
+    if (user == null) {
+      return cb(new Error("User not found"), false);
+    }
+    cb(null, user);
+  });
 }
